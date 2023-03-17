@@ -2,10 +2,12 @@ package com.example.todoapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,7 +21,8 @@ public class MainActivity extends AppCompatActivity {
     private static String EXTRA_NOTE_TEXT = "extra note text";
     private static String EXTRA_PRIORITY = "extra note priority";
 
-    private LinearLayout linearLayout;
+    private NotesAdapter adapter;
+    private RecyclerView recyclerViewNotes;
     private FloatingActionButton floatingButton;
     private TextView textEmptyList;
     private DataBase dataBase = DataBase.getInstance();
@@ -29,6 +32,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
+
+        recyclerViewNotes.setAdapter(adapter);
+        adapter.setOnNoteClickListener(new NotesAdapter.onNoteClickListener() {
+            @Override
+            public void onNoteClik(Note note) {
+                dataBase.removeNote(note.getId());
+                showNotes();
+            }
+        });
 
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,51 +58,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showNotes() {
-        linearLayout.removeAllViews();
-        if (dataBase.getNotes().isEmpty()){
+
+        if (dataBase.getNotes().isEmpty()) {
             textEmptyList.setVisibility(View.VISIBLE);
-            linearLayout.setVisibility(View.INVISIBLE);
+            recyclerViewNotes.setVisibility(View.INVISIBLE);
         } else {
             textEmptyList.setVisibility(View.INVISIBLE);
-            linearLayout.setVisibility(View.VISIBLE);
-            for (Note note : dataBase.getNotes()) {
-                View view = getLayoutInflater().inflate(
-                        R.layout.note_view,
-                        linearLayout,
-                        false);
-                TextView textViewNote = view.findViewById(R.id.textViewNote);
-                textViewNote.setText(note.getText());
-
-                int colorResId;
-                switch (note.getPriority()){
-                    case 0:
-                        colorResId = android.R.color.holo_green_light;
-                        break;
-                    case 1:
-                        colorResId = android.R.color.holo_orange_light;
-                        break;
-                    default:
-                        colorResId = android.R.color.holo_red_light;
-                }
-
-                int color = ContextCompat.getColor(this, colorResId);
-                textViewNote.setBackgroundColor(color);
-                linearLayout.addView(view);
-            }
+            recyclerViewNotes.setVisibility(View.VISIBLE);
+            adapter.setNotes(dataBase.getNotes());
         }
-
     }
+
 
     private void initViews() {
-        linearLayout = findViewById(R.id.linear_layout_notes);
+        recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
         floatingButton = findViewById(R.id.addButton);
         textEmptyList = findViewById(R.id.textViewEmptyList);
+        adapter = new NotesAdapter();
     }
-
-
-
-
-
 
 
 }

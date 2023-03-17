@@ -32,18 +32,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_input_add" />
 
-    <ScrollView
-        android:id="@+id/scrollView2"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewNotes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:visibility="visible">
-
-        <LinearLayout
-            android:id="@+id/linear_layout_notes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:visibility="invisible" />
-    </ScrollView>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
