@@ -1,6 +1,13 @@
 package com.example.todoapp;
 
+
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "notes")
 public class Note {
+
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String text;
     private int priority;
