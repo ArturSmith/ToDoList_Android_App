@@ -14,16 +14,18 @@ import java.util.ArrayList;
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
 
     private ArrayList<Note> notes = new ArrayList<>();
-
-    private onNoteClickListener onNoteClickListener;
-
-    public void setOnNoteClickListener(NotesAdapter.onNoteClickListener onNoteClickListener) {
-        this.onNoteClickListener = onNoteClickListener;
-    }
+//    private onNoteClickListener onNoteClickListener;
+//    public void setOnNoteClickListener(NotesAdapter.onNoteClickListener onNoteClickListener) {
+//        this.onNoteClickListener = onNoteClickListener;
+//    }
 
     public void setNotes(ArrayList<Note> notes) {
         this.notes = notes;
         notifyDataSetChanged();
+    }
+
+    public ArrayList<Note> getNotes() {
+        return new ArrayList<Note>(notes);
     }
 
     @NonNull
@@ -51,18 +53,17 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
             default:
                 colorResId = android.R.color.holo_red_light;
         }
-
         int color = ContextCompat.getColor(holder.itemView.getContext(), colorResId);
         holder.textViewNote.setBackgroundColor(color);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (onNoteClickListener != null){
-                    onNoteClickListener.onNoteClik(note);
-                }
-            }
-        });
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (onNoteClickListener != null){
+//                    onNoteClickListener.onNoteCliсk(note);
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -70,7 +71,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         return notes.size();
     }
 
-    class NotesViewHolder extends RecyclerView.ViewHolder {
+    static class NotesViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewNote;
         public NotesViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -78,7 +79,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         }
     }
 
-    interface onNoteClickListener{
-        void onNoteClik(Note note);
-    }
+//    interface onNoteClickListener{
+//        void onNoteCliсk(Note note);
+//    }
 }
