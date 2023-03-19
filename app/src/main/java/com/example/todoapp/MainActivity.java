@@ -20,14 +20,15 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewNotes;
     private FloatingActionButton floatingButton;
     private TextView textEmptyList;
-    private final DataBase dataBase = DataBase.getInstance();
     private ItemTouchHelper itemTouchHelper;
 
+    private NoteDatabase noteDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
+        noteDatabase = NoteDatabase.getInstance(getApplication());
         recyclerViewNotes.setAdapter(adapter);
         itemTouchHelper.attachToRecyclerView(recyclerViewNotes);
         floatingButtonClickListener();
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     ) {
                         int position = viewHolder.getAdapterPosition();
                         Note note = adapter.getNotes().get(position);
-                        dataBase.removeNote(note.getId());
+                        noteDatabase.notesDao().remove(note.getId());
                         showNotes();
                     }
                 });
@@ -88,13 +89,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void showNotes() {
 
-        if (dataBase.getNotes().isEmpty()) {
+        if (noteDatabase.notesDao().getNotes().isEmpty()) {
             textEmptyList.setVisibility(View.VISIBLE);
             recyclerViewNotes.setVisibility(View.INVISIBLE);
         } else {
             textEmptyList.setVisibility(View.INVISIBLE);
             recyclerViewNotes.setVisibility(View.VISIBLE);
-            adapter.setNotes(dataBase.getNotes());
+            adapter.setNotes(noteDatabase.notesDao().getNotes());
         }
     }
 

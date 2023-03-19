@@ -16,10 +16,8 @@ public class AddNoteScreen extends AppCompatActivity {
     private EditText noteText;
     private RadioButton low;
     private RadioButton medium;
-
     private Button button;
-
-    private DataBase dataBase = DataBase.getInstance();
+    private NoteDatabase notedataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +36,8 @@ public class AddNoteScreen extends AppCompatActivity {
     private void saveNote() {
         String text = noteText.getText().toString().trim();
         int priority = getPriority();
-        int id = dataBase.getNotes().size();
-        Note newNote = new Note(id, text, priority);
-        dataBase.addNote(newNote);
+        Note newNote = new Note(0, text, priority);
+        notedataBase.notesDao().add(newNote);
         finish();
     }
 
@@ -57,6 +54,7 @@ public class AddNoteScreen extends AppCompatActivity {
     }
 
     private void initViews() {
+        notedataBase = NoteDatabase.getInstance(getApplication());
         noteText = findViewById(R.id.editTextNoteText);
         button = findViewById(R.id.buttonAddNote);
         low = findViewById(R.id.radioButtonLow);
