@@ -1,11 +1,17 @@
 package com.example.todoapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,14 +23,21 @@ public class AddNoteScreen extends AppCompatActivity {
     private RadioButton low;
     private RadioButton medium;
     private Button button;
-    private NoteDatabase notedataBase;
-
+    private AddNoteScreenViewModel viewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_note_screen);
         initViews();
 
+        viewModel.getShouldClose().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean shouldClose) {
+                if (shouldClose) {
+                    finish();
+                }
+            }
+        });
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -32,15 +45,12 @@ public class AddNoteScreen extends AppCompatActivity {
             }
         });
     }
-
     private void saveNote() {
         String text = noteText.getText().toString().trim();
         int priority = getPriority();
         Note newNote = new Note(0, text, priority);
-        notedataBase.notesDao().add(newNote);
-        finish();
+        viewModel.saveNote(newNote);
     }
-
     private int getPriority() {
         int priority;
         if (low.isChecked()) {
@@ -54,7 +64,7 @@ public class AddNoteScreen extends AppCompatActivity {
     }
 
     private void initViews() {
-        notedataBase = NoteDatabase.getInstance(getApplication());
+        viewModel = new ViewModelProvider(this).get(AddNoteScreenViewModel.class);
         noteText = findViewById(R.id.editTextNoteText);
         button = findViewById(R.id.buttonAddNote);
         low = findViewById(R.id.radioButtonLow);

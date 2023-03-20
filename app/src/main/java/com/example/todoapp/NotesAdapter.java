@@ -15,6 +15,7 @@ import java.util.List;
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
 
     private List<Note> notes = new ArrayList<>();
+
 //    private onNoteClickListener onNoteClickListener;
 //    public void setOnNoteClickListener(NotesAdapter.onNoteClickListener onNoteClickListener) {
 //        this.onNoteClickListener = onNoteClickListener;

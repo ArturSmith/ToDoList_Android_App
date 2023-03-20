@@ -16,12 +16,10 @@ public abstract class NoteDatabase extends RoomDatabase {
             instance = Room.databaseBuilder(
                     application,
                     NoteDatabase.class,
-                    DB_NAME)
-                    .allowMainThreadQueries()
-                    .build();
+                    DB_NAME).build();
         }
         return instance;
     }
 
-    public  abstract NotesDao notesDao();
+    public abstract NotesDao notesDao();
 }

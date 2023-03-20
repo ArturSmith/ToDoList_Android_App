@@ -2,6 +2,8 @@ package com.example.todoapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,38 +14,36 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String EXTRA_NOTE_TEXT = "extra note text";
-    private static final String EXTRA_PRIORITY = "extra note priority";
+import java.util.List;
 
+public class MainActivity extends AppCompatActivity {
     private NotesAdapter adapter;
     private RecyclerView recyclerViewNotes;
     private FloatingActionButton floatingButton;
     private TextView textEmptyList;
     private ItemTouchHelper itemTouchHelper;
-
-    private NoteDatabase noteDatabase;
+    private MainViewModel mainViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initViews();
-        noteDatabase = NoteDatabase.getInstance(getApplication());
+        initVars();
         recyclerViewNotes.setAdapter(adapter);
         itemTouchHelper.attachToRecyclerView(recyclerViewNotes);
         floatingButtonClickListener();
-
-//      adapter.setOnNoteClickListener(new NotesAdapter.onNoteClickListener() {
-//            @Override
-//            public void onNoteCliсk(Note note) {
-//            }
-//        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showNotes();
+        mainViewModel.getNotes().observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(List<Note> notes) {
+                if (notes.isEmpty()) {
+                    textEmptyList.setVisibility(View.VISIBLE);
+                    recyclerViewNotes.setVisibility(View.INVISIBLE);
+                } else {
+                    textEmptyList.setVisibility(View.INVISIBLE);
+                    recyclerViewNotes.setVisibility(View.VISIBLE);
+                    adapter.setNotes(notes);
+                }
+            }
+        });
     }
 
     private void floatingButtonClickListener() {
@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
                     ) {
                         return false;
                     }
-
                     @Override
                     public void onSwiped(
                             @NonNull RecyclerView.ViewHolder viewHolder,
@@ -79,33 +78,17 @@ public class MainActivity extends AppCompatActivity {
                     ) {
                         int position = viewHolder.getAdapterPosition();
                         Note note = adapter.getNotes().get(position);
-                        noteDatabase.notesDao().remove(note.getId());
-                        showNotes();
+                        mainViewModel.remove(note);
                     }
                 });
-
         return itemTouchHelper;
     }
-
-    private void showNotes() {
-
-        if (noteDatabase.notesDao().getNotes().isEmpty()) {
-            textEmptyList.setVisibility(View.VISIBLE);
-            recyclerViewNotes.setVisibility(View.INVISIBLE);
-        } else {
-            textEmptyList.setVisibility(View.INVISIBLE);
-            recyclerViewNotes.setVisibility(View.VISIBLE);
-            adapter.setNotes(noteDatabase.notesDao().getNotes());
-        }
-    }
-
-    private void initViews() {
+    private void initVars() {
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         recyclerViewNotes = findViewById(R.id.recyclerViewNotes);
         floatingButton = findViewById(R.id.addButton);
         textEmptyList = findViewById(R.id.textViewEmptyList);
         adapter = new NotesAdapter();
         itemTouchHelper = itemTouchHelper();
     }
-
-
 }
