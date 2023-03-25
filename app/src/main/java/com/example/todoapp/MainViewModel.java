@@ -31,7 +31,4 @@ public class MainViewModel extends AndroidViewModel {
         return noteDatabase.notesDao().getNotes();
     }
 
-    public void add(Note note) {
-        noteDatabase.notesDao().add(note);
-    }
 }

@@ -1,5 +1,6 @@
 package com.example.todoapp;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHolder> {
-
     private List<Note> notes = new ArrayList<>();
 
-//    private onNoteClickListener onNoteClickListener;
-//    public void setOnNoteClickListener(NotesAdapter.onNoteClickListener onNoteClickListener) {
-//        this.onNoteClickListener = onNoteClickListener;
-//    }
-
+    @SuppressLint("NotifyDataSetChanged")
     public void setNotes(List<Note> notes) {
         this.notes = notes;
         notifyDataSetChanged();
     }
-
     public List<Note> getNotes() {
         return new ArrayList<Note>(notes);
     }
-
     @NonNull
     @Override
     public NotesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,7 +33,6 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
                 false);
         return new NotesViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull NotesViewHolder holder, int position) {
         Note note = notes.get(position);
@@ -57,17 +50,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         }
         int color = ContextCompat.getColor(holder.itemView.getContext(), colorResId);
         holder.textViewNote.setBackgroundColor(color);
-
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (onNoteClickListener != null){
-//                    onNoteClickListener.onNoteCliсk(note);
-//                }
-//            }
-//        });
     }
-
     @Override
     public int getItemCount() {
         return notes.size();
@@ -80,8 +63,4 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         textViewNote = itemView.findViewById(R.id.textViewNote);
         }
     }
-
-//    interface onNoteClickListener{
-//        void onNoteCliсk(Note note);
-//    }
 }
